@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WTF-16 人格测试 | 你到底是什么品种的离谱</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
+
+  :root {
+    --bg: #0a0a0f;
+    --card: #14141f;
+    --card-hover: #1a1a2e;
+    --accent: #ff3e6c;
+    --accent2: #00e5ff;
+    --accent3: #ffd700;
+    --accent4: #a855f7;
+    --text: #e8e8f0;
+    --text-dim: #8888aa;
+    --border: #2a2a3e;
+    --correct: #22c55e;
+    --wrong: #ef4444;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans SC', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* 背景动画 */
+  .bg-animation {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .bg-animation .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.15;
+    animation: float 20s infinite ease-in-out;
+  }
+
+  .bg-animation .orb:nth-child(1) {
+    width: 400px; height: 400px;
+    background: var(--accent);
+    top: -100px; left: -100px;
+    animation-delay: 0s;
+  }
+
+  .bg-animation .orb:nth-child(2) {
+    width: 350px; height: 350px;
+    background: var(--accent2);
+    top: 50%; right: -100px;
+    animation-delay: -5s;
+  }
+
+  .bg-animation .orb:nth-child(3) {
+    width: 300px; height: 300px;
+    background: var(--accent4);
+    bottom: -100px; left: 30%;
+    animation-delay: -10s;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    25% { transform: translate(50px, -80px) scale(1.1); }
+    50% { transform: translate(-30px, 60px) scale(0.9); }
+    75% { transform: translate(70px, 30px) scale(1.05); }
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ===== 首页 ===== */
+  #startPage {
+    text-align: center;
+    animation: fadeInUp 0.8s ease;
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .logo {
+    font-size: 72px;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--accent), var(--accent2), var(--accent3), var(--accent4));
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradientShift 4s ease infinite;
+    margin-bottom: 8px;
+    letter-spacing: -2px;
+  }
+
+  @keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  .subtitle {
+    font-size: 18px;
+    color: var(--text-dim);
+    margin-bottom: 40px;
+    font-weight: 300;
+    line-height: 1.8;
+  }
+
+  .subtitle span {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .features {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 40px;
+    text-align: left;
+  }
+
+  .feature-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    font-size: 13px;
+    color: var(--text-dim);
+    transition: all 0.3s;
+  }
+
+  .feature-item:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .feature-item .emoji {
+    font-size: 24px;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .feature-item strong {
+    color: var(--text);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .btn-start {
+    background: linear-gradient(135deg, var(--accent), #ff6b9d);
+    color: white;
+    border: none;
+    padding: 18px 60px;
+    font-size: 20px;
+    font-weight: 700;
+    border-radius: 60px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: inherit;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-start:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 40px rgba(255, 62, 108, 0.4);
+  }
+
+  .btn-start:active {
+    transform: scale(0.98);
+  }
+
+  .disclaimer {
+    margin-top: 24px;
+    font-size: 11px;
+    color: var(--text-dim);
+    opacity: 0.5;
+  }
+
+  /* ===== 答题页 ===== */
+  #quizPage {
+    display: none;
+    width: 100%;
+    animation: fadeInUp 0.5s ease;
+  }
+
+  .progress-bar-container {
+    width: 100%;
+    height: 6px;
+    background: var(--card);
+    border-radius: 3px;
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 3px;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 0%;
+  }
+
+  .progress-text {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 32px;
+    text-align: right;
+  }
+
+  .question-number {
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  .question-text {
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.6;
+    margin-bottom: 32px;
+    min-height: 70px;
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .option-btn {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    padding: 18px 24px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: inherit;
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.6;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .option-btn:hover {
+    border-color: var(--accent);
+    background: var(--card-hover);
+    transform: translateX(4px);
+  }
+
+  .option-btn.selected {
+    border-color: var(--accent);
+    background: rgba(255, 62, 108, 0.1);
+  }
+
+  .option-label {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--accent);
+    flex-shrink: 0;
+    transition: all 0.3s;
+  }
+
+  .option-btn:hover .option-label,
+  .option-btn.selected .option-label {
+    background: var(--accent);
+    color: white;
+  }
+
+  .btn-prev {
+    margin-top: 28px;
+    width: 100%;
+    background: var(--card);
+    border: 2px solid var(--border);
+    color: var(--text-dim);
+    padding: 16px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: inherit;
+  }
+
+  .btn-prev:hover {
+    border-color: var(--accent4);
+    background: rgba(168, 85, 247, 0.1);
+    color: var(--text);
+  }
+
+  .btn-prev.hidden {
+    display: none;
+  }
+
+  .btn-next {
+    margin-top: 0;
+    width: 100%;
+    background: var(--card);
+    border: 2px solid var(--border);
+    color: var(--text);
+    padding: 16px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: inherit;
+    opacity: 0.4;
+    pointer-events: none;
+  }
+
+  .btn-next.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .btn-next.active:hover {
+    border-color: var(--accent2);
+    background: rgba(0, 229, 255, 0.1);
+  }
+
+  /* ===== 结果页 ===== */
+  #resultPage {
+    display: none;
+    width: 100%;
+    animation: fadeInUp 0.8s ease;
+    text-align: center;
+  }
+
+  .result-type-code {
+    font-size: 64px;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 4px;
+    letter-spacing: 6px;
+  }
+
+  .result-type-name {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .result-tagline {
+    font-size: 15px;
+    color: var(--accent);
+    margin-bottom: 32px;
+    font-weight: 500;
+  }
+
+  .result-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 32px;
+    text-align: left;
+    margin-bottom: 20px;
+  }
+
+  .result-card h3 {
+    font-size: 16px;
+    color: var(--accent2);
+    margin-bottom: 16px;
+    font-weight: 700;
+  }
+
+  .result-card p {
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+  }
+
+  .result-card p:last-child {
+    margin-bottom: 0;
+  }
+
+  .dimension-bars {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .dimension-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .dimension-label {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+
+  .dimension-letters {
+    font-size: 20px;
+    font-weight: 900;
+    margin-bottom: 8px;
+  }
+
+  .dimension-bar {
+    height: 6px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+
+  .dimension-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 1s ease;
+  }
+
+  .compatibility {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+    text-align: left;
+  }
+
+  .compatibility h3 {
+    font-size: 16px;
+    color: var(--accent3);
+    margin-bottom: 16px;
+    font-weight: 700;
+  }
+
+  .compat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+
+  .compat-item:last-child {
+    border-bottom: none;
+  }
+
+  .compat-type {
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .compat-desc {
+    color: var(--text-dim);
+    font-size: 13px;
+  }
+
+  .btn-restart {
+    background: linear-gradient(135deg, var(--accent4), #c084fc);
+    color: white;
+    border: none;
+    padding: 16px 48px;
+    font-size: 16px;
+    font-weight: 700;
+    border-radius: 60px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: inherit;
+    margin-top: 12px;
+  }
+
+  .btn-restart:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 30px rgba(168, 85, 247, 0.4);
+  }
+
+  .share-section {
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+
+  .share-section p {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+  }
+
+  .btn-share {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 12px 32px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: inherit;
+    margin: 0 6px;
+  }
+
+  .btn-share:hover {
+    border-color: var(--accent3);
+    background: rgba(255, 215, 0, 0.1);
+  }
+
+  /* ===== 加载动画 ===== */
+  .loading-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: var(--bg);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .loading-overlay.show {
+    display: flex;
+  }
+
+  .loading-text {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    animation: pulse 1.5s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .loading-dots {
+    display: flex;
+    gap: 8px;
+  }
+
+  .loading-dots span {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: bounce 1.4s infinite ease-in-out both;
+  }
+
+  .loading-dots span:nth-child(1) { animation-delay: -0.32s; }
+  .loading-dots span:nth-child(2) { animation-delay: -0.16s; }
+  .loading-dots span:nth-child(3) { animation-delay: 0; }
+
+  @keyframes bounce {
+    0%, 80%, 100% { transform: scale(0); }
+    40% { transform: scale(1); }
+  }
+
+  /* 响应式 */
+  @media (max-width: 600px) {
+    .logo { font-size: 48px; }
+    .features { grid-template-columns: 1fr; }
+    .question-text { font-size: 18px; }
+    .result-type-code { font-size: 48px; }
+    .result-type-name { font-size: 22px; }
+    .dimension-bars { grid-template-columns: 1fr; }
+    .container { padding: 16px; }
+  }
+
+  /* 隐藏滚动条美化 */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+</style>
+</head>
+<body>
+
+<div class="bg-animation">
+  <div class="orb"></div>
+  <div class="orb"></div>
+  <div class="orb"></div>
+</div>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-dots">
+    <span></span><span></span><span></span>
+  </div>
+  <div class="loading-text">正在分析你的离谱程度...</div>
+</div>
+
+<div class="container">
+
+  <!-- ===== 首页 ===== -->
+  <div id="startPage">
+    <div class="logo">WTF-16</div>
+    <div class="subtitle">
+      <span>全球首个</span>让你做完怀疑人生的性格测试<br>
+      比 MBTI 更离谱 · 比 星座 更抽象 · 比 算命 更不靠谱
+    </div>
+    <div class="features">
+      <div class="feature-item">
+        <span class="emoji">🧠</span>
+        <strong>科学依据</strong>
+        毫无科学依据，纯靠瞎编
+      </div>
+      <div class="feature-item">
+        <span class="emoji">🎯</span>
+        <strong>精准度</strong>
+        准确率约等于抛硬币
+      </div>
+      <div class="feature-item">
+        <span class="emoji">💀</span>
+        <strong>副作用</strong>
+        可能导致自我认知崩塌
+      </div>
+      <div class="feature-item">
+        <span class="emoji">🤡</span>
+        <strong>适用人群</strong>
+        所有人类及部分猫
+      </div>
+    </div>
+    <button class="btn-start" onclick="startQuiz()">开始怀疑人生</button>
+    <div class="disclaimer">⚠️ 本测试纯属娱乐，如有雷同，说明你真的很离谱</div>
+  </div>
+
+  <!-- ===== 答题页 ===== -->
+  <div id="quizPage">
+    <div class="progress-bar-container">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <div class="progress-text" id="progressText">1 / 24</div>
+    <div class="question-number" id="questionNumber">QUESTION 01</div>
+    <div class="question-text" id="questionText"></div>
+    <div class="options" id="optionsContainer"></div>
+    <button class="btn-prev hidden" id="btnPrev" onclick="prevQuestion()">← 上一题</button>
+    <button class="btn-next" id="btnNext" onclick="nextQuestion()">下一题 →</button>
+  </div>
+
+  <!-- ===== 结果页 ===== -->
+  <div id="resultPage">
+    <div class="result-type-code" id="resultCode"></div>
+    <div class="result-type-name" id="resultName"></div>
+    <div class="result-tagline" id="resultTagline"></div>
+
+    <div class="dimension-bars" id="dimensionBars"></div>
+
+    <div class="result-card">
+      <h3>📋 你的离谱鉴定报告</h3>
+      <div id="resultDescription"></div>
+    </div>
+
+    <div class="result-card">
+      <h3>⚡ 你的超能力</h3>
+      <div id="resultPower"></div>
+    </div>
+
+    <div class="result-card">
+      <h3>🚫 你的致命弱点</h3>
+      <div id="resultWeakness"></div>
+    </div>
+
+    <div class="compatibility" id="compatibilitySection">
+      <h3>💕 人际关系指南</h3>
+      <div id="compatibilityContent"></div>
+    </div>
+
+    <div class="share-section">
+      <p>👇 把你的离谱程度分享给朋友</p>
+      <button class="btn-share" onclick="copyResult()">📋 复制结果</button>
+      <button class="btn-share" onclick="restartQuiz()">🔄 重新测试</button>
+    </div>
+
+    <button class="btn-restart" onclick="restartQuiz()">再来一次，我不信</button>
+  </div>
+
+</div>
+
+<script>
+// ===== 维度定义 =====
+// 维度1: S(摆烂型) vs D(奋斗型) — 你面对人生的态度
+// 维度2: H(幻觉型) vs R(现实型) — 你和现实的关系
+// 维度3: C(抽象型) vs N(正常型) — 你的精神状态
+// 维度4: G(社恐型) vs E(社牛型) — 你的社交模式
+
+const DIMENSIONS = ['SD', 'HR', 'CN', 'GE'];
+
+// ===== 题目数据 =====
+const questions = [
+  {
+    text: "闹钟响了，你的第一反应是？",
+    dim: "SD",
+    options: [
+      { text: "关掉闹钟，和床板融为一体，这是基本人权", score: "S" },
+      { text: "挣扎3秒后继续睡，但心里充满愧疚", score: "S" },
+      { text: "一跃而起！新的一天充满希望！（然后5分钟后困了）", score: "D" },
+      { text: "闹钟？我生物钟比瑞士钟表还准，6:00准时睁眼", score: "D" }
+    ]
+  },
+  {
+    text: "朋友约你周末出去玩，你的内心OS是？",
+    dim: "GE",
+    options: [
+      { text: "好耶！去哪？几点？穿什么？我马上到！", score: "E" },
+      { text: "可以啊，到时候看", score: "E" },
+      { text: "已读不回，假装没看到，等对方忘记", score: "G" },
+      { text: "内心疯狂拒绝，嘴上说'好啊好啊'，然后找借口鸽掉", score: "G" }
+    ]
+  },
+  {
+    text: "你在超市结账时发现前面有一个人插队，你会？",
+    dim: "CN",
+    options: [
+      { text: "大声说'不好意思，队尾在后面'，维护宇宙秩序", score: "N" },
+      { text: "在心里骂了对方祖宗十八代，表面上微笑着让位", score: "N" },
+      { text: "开始思考：插队是不是也是一种人生哲学？", score: "C" },
+      { text: "加入他，两个人一起插队，团结就是力量", score: "C" }
+    ]
+  },
+  {
+    text: "深夜12点，你突然想起了一件三年前的尴尬事，你会？",
+    dim: "HR",
+    options: [
+      { text: "在床上翻来覆去，恨不得穿越回去给自己一巴掌", score: "R" },
+      { text: "叹口气，翻个身，强迫自己想点别的", score: "R" },
+      { text: "开始编造一个平行宇宙，在那个宇宙里那件事根本没发生", score: "H" },
+      { text: "尴尬？不存在的，那是我高光时刻", score: "H" }
+    ]
+  },
+  {
+    text: "领导/老师突然说'你来回答一下这个问题'，你的反应是？",
+    dim: "GE",
+    options: [
+      { text: "淡定站起来，流利回答，顺便拓展一下", score: "E" },
+      { text: "虽然不会，但自信地胡说八道，居然蒙对了", score: "E" },
+      { text: "瞬间石化，大脑蓝屏，灵魂出窍", score: "G" },
+      { text: "低下头，疯狂缩小存在感，希望点名系统出bug", score: "G" }
+    ]
+  },
+  {
+    text: "你的手机只剩1%电了，你会？",
+    dim: "SD",
+    options: [
+      { text: "淡定地继续刷手机，直到它自己关机，这是命运", score: "S" },
+      { text: "到处借充电器，但借到之后又忘了充", score: "S" },
+      { text: "立刻冲向充电器，一秒都不能浪费", score: "D" },
+      { text: "我手机永远不低于20%，我有充电焦虑症", score: "D" }
+    ]
+  },
+  {
+    text: "走在路上突然踩到一坨不明物体，你的第一句话是？",
+    dim: "CN",
+    options: [
+      { text: "'呕——' 然后疯狂在草地上蹭鞋底", score: "N" },
+      { text: "冷静分析这坨物体的成分和来源", score: "N" },
+      { text: "'这是上天赐予我的礼物' 然后发朋友圈", score: "C" },
+      { text: "仔细端详三秒，拍照记录，发到群里问大家这是什么", score: "C" }
+    ]
+  },
+  {
+    text: "你发了一条朋友圈/微博，5分钟了没人点赞，你会？",
+    dim: "HR",
+    options: [
+      { text: "删掉，假装无事发生，这条从未存在过", score: "R" },
+      { text: "焦虑地刷新，怀疑自己是不是被全网屏蔽了", score: "R" },
+      { text: "无所谓，我发朋友圈是为了记录生活，不是为了点赞", score: "H" },
+      { text: "给自己点赞，然后评论'说得太对了！'", score: "H" }
+    ]
+  },
+  {
+    text: "你去餐厅吃饭，服务员问'要点什么'，你会？",
+    dim: "GE",
+    options: [
+      { text: "自信点菜，顺便问服务员推荐什么，聊两句", score: "E" },
+      { text: "快速翻菜单，30秒内决定，绝不纠结", score: "E" },
+      { text: "翻菜单翻到服务员来第三次，最后点了碗面", score: "G" },
+      { text: "'随便' '都行' '你看着办' '嗯...那个...算了'", score: "G" }
+    ]
+  },
+  {
+    text: "你看到前任发了新动态，你会？",
+    dim: "SD",
+    options: [
+      { text: "划走，内心毫无波澜（其实看了8遍）", score: "S" },
+      { text: "截图发给闺蜜/兄弟，开始3小时深度分析", score: "S" },
+      { text: "划走，真的毫无波澜，我的人生在前进", score: "D" },
+      { text: "点个赞，表示大度，然后继续搞事业", score: "D" }
+    ]
+  },
+  {
+    text: "如果把你的人生拍成电影，片名应该叫什么？",
+    dim: "CN",
+    options: [
+      { text: "《普通人的一生》", score: "N" },
+      { text: "《那些年我努力但没用的日子》", score: "N" },
+      { text: "《我在地球的卧底日记》", score: "C" },
+      { text: "《一个精神状态遥遥领先的人》", score: "C" }
+    ]
+  },
+  {
+    text: "你一个人在家，突然听到奇怪的声音，你会？",
+    dim: "HR",
+    options: [
+      { text: "拿起手边最重的东西，慢慢靠近声源", score: "R" },
+      { text: "打开手机录像，万一是灵异事件呢", score: "R" },
+      { text: "戴上耳机，假装什么都没听到，不存在的就不存在", score: "H" },
+      { text: "'你好？有人吗？需要帮忙吗？' 主动和声音打招呼", score: "H" }
+    ]
+  },
+  {
+    text: "你的桌面/房间目前的状态是？",
+    dim: "SD",
+    options: [
+      { text: "乱中有序，我知道每样东西在哪（虽然看起来像被炸过）", score: "S" },
+      { text: "东西堆成山但我不觉得乱，这是我的'创意工作区'", score: "S" },
+      { text: "一尘不染，所有东西按颜色和大小排列", score: "D" },
+      { text: "定期整理，保持整洁，强迫症不允许任何歪的东西", score: "D" }
+    ]
+  },
+  {
+    text: "坐电梯时遇到邻居，你会怎么做？",
+    dim: "GE",
+    options: [
+      { text: "热情打招呼，聊聊天气和物业", score: "E" },
+      { text: "点头微笑，然后低头看手机", score: "E" },
+      { text: "假装在打电话，避免一切眼神接触", score: "G" },
+      { text: "等下一班电梯", score: "G" }
+    ]
+  },
+  {
+    text: "你在网上和人吵架，吵不过了怎么办？",
+    dim: "CN",
+    options: [
+      { text: "理性分析，摆事实讲道理，用逻辑碾压对方", score: "N" },
+      { text: "不吵了，退出对话，何必和陌生人浪费时间", score: "N" },
+      { text: "开始发抽象表情包，让对方完全不知道怎么回", score: "C" },
+      { text: "直接说'你说得对'，然后继续用更离谱的角度反驳", score: "C" }
+    ]
+  },
+  {
+    text: "你发现自己被一个不熟的人拉进了一个群聊，你会？",
+    dim: "HR",
+    options: [
+      { text: "立刻退出，我的群聊我做主", score: "R" },
+      { text: "潜水观察，看看是什么群再说", score: "R" },
+      { text: "发一个表情包打招呼，然后开始活跃气氛", score: "H" },
+      { text: "开始往群里发各种离谱内容，把这个群变成自己的主场", score: "H" }
+    ]
+  },
+  {
+    text: "deadline（截止日期）前一天晚上，你在干嘛？",
+    dim: "SD",
+    options: [
+      { text: "疯狂赶工，效率爆表，一夜创造奇迹", score: "S" },
+      { text: "刷手机，心里想着'还有时间'，然后凌晨3点开始崩溃", score: "S" },
+      { text: "淡定地做最后的检查和润色，我一周前就做完了", score: "D" },
+      { text: "早就做完了，现在在帮别人赶工", score: "D" }
+    ]
+  },
+  {
+    text: "别人夸你的时候，你的反应是？",
+    dim: "GE",
+    options: [
+      { text: "开心接受，顺便夸回去，商业互吹", score: "E" },
+      { text: "'哈哈哈哈谢谢！' 然后内心偷偷开心一整天", score: "E" },
+      { text: "疯狂否认，'没有没有，我哪有那么好'", score: "G" },
+      { text: "表面淡定，内心已经把这句话截图设为屏保了", score: "G" }
+    ]
+  },
+  {
+    text: "你做了一件特别丢脸的事之后，你的处理方式是？",
+    dim: "CN",
+    options: [
+      { text: "假装什么都没发生，快速翻篇，绝口不提", score: "N" },
+      { text: "回家后反复复盘，想出一百种更好的应对方式", score: "N" },
+      { text: "主动把这件事讲给所有人听，先黑自己，别人就没法黑你了", score: "C" },
+      { text: "把这件事编成一个段子，发到网上，收获10万赞", score: "C" }
+    ]
+  },
+  {
+    text: "你对着镜子的时候，通常会？",
+    dim: "HR",
+    options: [
+      { text: "快速检查一下头发和脸，然后离开", score: "R" },
+      { text: "仔细审视自己的每一个毛孔，然后叹气", score: "R" },
+      { text: "对着镜子摆各种pose，觉得自己今天帅/美炸了", score: "H" },
+      { text: "和镜子里的自己对视，开始一场深刻的灵魂对话", score: "H" }
+    ]
+  },
+  {
+    text: "如果明天就是世界末日，你今晚会做什么？",
+    dim: "SD",
+    options: [
+      { text: "该吃吃该喝喝，躺平等待末日，反正也跑不了", score: "S" },
+      { text: "把所有没看的剧追完，死也要死得充实", score: "S" },
+      { text: "列一个末日bucket list，然后逐项完成", score: "D" },
+      { text: "打电话给所有重要的人说再见，然后写遗书", score: "D" }
+    ]
+  },
+  {
+    text: "你在路上走，突然有人冲你笑了一下，你会？",
+    dim: "GE",
+    options: [
+      { text: "回一个微笑，心里暖暖的", score: "E" },
+      { text: "也冲对方笑，然后想'今天运气不错'", score: "E" },
+      { text: "低头快步走开，'他是不是在笑我衣服穿反了？'", score: "G" },
+      { text: "检查自己的脸、衣服、鞋带、头发，确认没有问题后才松一口气", score: "G" }
+    ]
+  },
+  {
+    text: "你收到一个快递，但你完全不记得自己买过东西，你会？",
+    dim: "CN",
+    options: [
+      { text: "查购买记录，确认是不是家人的或者系统出错", score: "N" },
+      { text: "小心翼翼地打开，检查里面是什么", score: "N" },
+      { text: "拆开，不管是什么先用起来再说", score: "C" },
+      { text: "'这是宇宙送给我的礼物'，发朋友圈炫耀", score: "C" }
+    ]
+  },
+  {
+    text: "凌晨3点，你还醒着，你在想什么？",
+    dim: "HR",
+    options: [
+      { text: "焦虑明天的工作/学习，越想越清醒", score: "R" },
+      { text: "回忆今天所有尴尬的瞬间，逐帧回放", score: "R" },
+      { text: "思考宇宙的终极奥秘：人为什么要上班？", score: "H" },
+      { text: "在脑内开演唱会/拍电影/拯救世界", score: "H" }
+    ]
+  }
+];
+
+// ===== 16种人格类型 =====
+const types = {
+  "SCHG": {
+    name: "薛定谔的摆烂王",
+    tagline: "在摆烂和奋斗的叠加态中，永远观测不出结果",
+    desc: "你是人类进化史上的一个谜。你可以在躺平和卷王之间无缝切换，切换频率取决于今天的天气、星座运势和午饭吃了什么。你的床头永远放着一本'明天开始努力'的笔记本，但那本笔记本上积的灰比你的发际线后退得还快。你不是不努力，你只是在努力之前需要先进行长达72小时的准备工作。",
+    power: "能够在任何deadline前夜爆发出超越人类极限的生产力，一夜之间完成别人一周的工作量。虽然质量嘛...就那样。",
+    weakness: "第二天会因为昨晚的爆发而彻底瘫痪，进入为期3天的恢复期，然后循环往复。你的生活就是一个巨大的过山车，只不过大部分时间都在最低点。",
+    compat: { best: "DCHG", bestDesc: "你们会一起在深夜emo然后互相鼓励明天一定努力", worst: "DCNE", worstDesc: "TA的自律会让你感到窒息" }
+  },
+  "SCNG": {
+    name: "互联网嘴替型社恐",
+    tagline: "网上重拳出击，线下唯唯诺诺",
+    desc: "你在网上是金句制造机，评论区永远有你的身影，每个梗你都能接住。但到了线下，你连和外卖小哥说'谢谢'都要做5分钟心理建设。你的微信聊天记录和现实表现完全是两个人。朋友都说'你网上怎么和现实中不一样？'你微笑不语，因为你的社恐不允许你在现实中解释这件事。",
+    power: "文字输出能力MAX，能在任何社交平台上用最精准的语言表达观点，是当之无愧的评论区战神。",
+    weakness: "一旦需要进行语音通话或面对面交流，你的语言系统会全面崩溃，退化成只会点头和说'嗯嗯'的原始人。",
+    compat: { best: "SCHE", bestDesc: "TA会替你完成所有社交，你负责在幕后出谋划策", worst: "DHRE", worstDesc: "TA会试图把你拉出去社交，你的噩梦" }
+  },
+  "SHCG": {
+    name: "清醒的疯子",
+    tagline: "我知道我很离谱，但我选择继续",
+    desc: "你是那种明明知道自己在做蠢事但依然会继续做的人。你有一种独特的自我觉察能力——你能清楚地看到自己的每一个缺点和问题，然后选择性地忽略它们。你的人生哲学是'既然已经够离谱了，不如再离谱一点'。你的朋友经常分不清你是在开玩笑还是认真的，说实话，有时候你自己也分不清。",
+    power: "拥有超强的自嘲能力和幽默感，任何尴尬的处境都能被你化解成段子。你是朋友圈里的开心果。",
+    weakness: "用幽默来掩饰一切真实情感，包括悲伤。别人以为你永远在笑，其实你只是在哭的时候也在笑。",
+    compat: { best: "DHRG", bestDesc: "TA的认真能接住你的疯狂", worst: "SCNE", worstDesc: "你们会互相觉得对方有病" }
+  },
+  "SHNG": {
+    name: "伪装成正常人的外星人",
+    tagline: "每天都在模仿人类，演技越来越好了",
+    desc: "你是一个正在努力学习如何做一个'正常人'的外星生命体。你已经掌握了基本的人类社交技能，比如在别人讲笑话时适时地笑，在被问到'你还好吗'时回答'我很好'。但偶尔你的外星本性会暴露——比如在严肃的会议上突然笑出声，或者在葬礼上想点外卖。你不是不正常，你只是正常得不太对劲。",
+    power: "观察力极强，能够完美模仿任何人的行为模式。你是一个天生的演员，只可惜舞台是整个人生。",
+    weakness: "因为太擅长伪装，经常忘记自己真正的样子是什么。夜深人静时你会问自己：我到底是谁？",
+    compat: { best: "DCEG", bestDesc: "TA的真实会让你也放下伪装", worst: "SHCG", worstDesc: "两个外星人在一起会暴露身份" }
+  },
+  "DCHG": {
+    name: "卷王中的抽象派",
+    tagline: "我可以很努力，但我要用最离谱的方式",
+    desc: "你是那种会把'努力'这件事本身都做得很有创意的人。别人用番茄工作法，你发明了'西瓜工作法'——一次专注4小时然后休息2小时吃西瓜。你的桌面上贴满了自律计划表，但每张计划表上的字体和颜色都不一样，因为你觉得'连计划表都要有设计感'。你确实很努力，但你的努力方式让旁观者感到困惑。",
+    power: "执行力超强，一旦决定了就会全力以赴。而且你的创意总能让枯燥的工作变得有趣（至少对你自己来说）。",
+    weakness: "经常因为追求'有趣的方式'而偏离目标，最后花了3小时做了一个漂亮的计划表，然后1小时完成了任务。",
+    compat: { best: "SCHG", bestDesc: "你们是最佳拍档，一个负责卷一个负责摆", worst: "SCNG", worstDesc: "TA的摆烂会让你抓狂" }
+  },
+  "DCNG": {
+    name: "高效社恐机器",
+    tagline: "我社恐，但我把社恐的时间都用来提升了",
+    desc: "你是一个把'社恐'转化为生产力的天才。因为不想和人说话，你自学了3门编程语言、考了5个证书、读了200本书。你的简历比你的社交圈厚得多。你的人生信条是'只要我足够优秀，就不用社交了'。遗憾的是，你确实变得很优秀，但你依然社恐。不过没关系，至少你现在是一个有才华的社恐。",
+    power: "专注力MAX，能在完全不受社交干扰的情况下高效完成任何任务。你的个人能力是同龄人中的天花板。",
+    weakness: "所有需要团队合作的场景都是你的地狱。你宁愿一个人做十个人的工作，也不想开一个30分钟的会议。",
+    compat: { best: "DCHE", bestDesc: "TA负责社交你负责输出，完美分工", worst: "SHCG", worstDesc: "TA的疯狂会打乱你的计划" }
+  },
+  "DHRG": {
+    name: "人间清醒卷王",
+    tagline: "我卷不是因为焦虑，是因为我真的想赢",
+    desc: "你是那种让所有人又敬又怕的存在。你目标明确、计划清晰、执行力强，而且最可怕的是——你不是因为焦虑才卷的，你是真的享受进步的过程。你的日历上排满了各种学习和提升计划，但你的精神状态出奇地稳定。别人熬夜加班是因为焦虑，你熬夜加班是因为'这个项目太有意思了'。你让摆烂的人感到羞愧，让其他卷王感到压力。",
+    power: "几乎没有任何弱点。你就像一个没有bug的程序，稳定、高效、可靠。你是所有团队都想拥有的成员。",
+    weakness: "你最大的问题就是没有问题，这本身就是最大的问题。你偶尔也会想：我这样活着是不是太无聊了？",
+    compat: { best: "SHCG", bestDesc: "TA的疯狂是你生活中唯一的变数", worst: "SCHG", worstDesc: "TA的摆烂会让你怀疑人生" }
+  },
+  "DHRE": {
+    name: "社交型卷王",
+    tagline: "我不仅要赢，还要让所有人都知道我赢了",
+    desc: "你是那种在健身房自拍、在图书馆直播学习、在加班时发朋友圈的人。你的努力需要一个观众。你确实很优秀，但你更优秀的地方在于——让所有人都知道你很优秀。你的人生就像一场真人秀，而你是唯一的嘉宾兼导演兼制片人。你的社交媒体上全是正能量和鸡汤，偶尔有人怀疑你是不是装的，但你用实力打脸了所有质疑者。",
+    power: "超强的影响力和感染力，你能让身边的人都被你的正能量带动起来。你是天生的leader。",
+    weakness: "一旦没有得到预期的关注和认可，你的动力会断崖式下跌。你的努力和你的点赞数成正比。",
+    compat: { best: "DCNG", bestDesc: "你们一个负责社交一个负责输出", worst: "SHNG", worstDesc: "TA看穿你的表演会让你不安" }
+  },
+  "SCHE": {
+    name: "社交悍匪型摆烂王",
+    tagline: "我什么都不想干，但我想和所有人聊天",
+    desc: "你是一个矛盾体——你不想工作、不想学习、不想做任何有生产力的事情，但你想和所有人聊天。你是那种在办公室里工作效率最低但人气最高的人。你的工位永远是同事们午休时的聚集地，因为你有说不完的八卦和段子。你的老板对你又爱又恨——爱你的团队凝聚力，恨你的KPI。你的人生目标大概是'交到全世界的朋友然后一起摆烂'。",
+    power: "人脉王，认识的人比你吃过的米还多。你有一种神奇的能力——和任何人都能在3分钟内成为朋友。",
+    weakness: "除了社交以外的所有能力都在平均水平以下。你的简历上唯一的亮点是'具有良好的沟通能力'。",
+    compat: { best: "SCNG", bestDesc: "TA替你写文案，你替TA社交", worst: "DHRG", worstDesc: "TA的认真让你感到压力" }
+  },
+  "SHEG": {
+    name: "快乐小废物",
+    tagline: "虽然什么都不会，但很开心啊",
+    desc: "你是那种让所有人又羡慕又心疼的存在。你的生活技能约等于零——你可能不会做饭、不会修东西、不会用Excel、甚至不会系鞋带（好吧这个有点夸张）。但你是真的快乐。你有一种'无知即自由'的豁达，对生活中的一切困难都采取'船到桥头自然直'的态度。你的朋友们经常感叹'你怎么能一直这么开心？'你回答'因为我想得少啊'。",
+    power: "快乐感染力MAX，和你在一起的人都会不自觉地变得开心。你是行走的快乐源泉。",
+    weakness: "一旦遇到真正需要解决的问题，你会像一只被扔进水里的猫一样手足无措。你的生存能力令人担忧。",
+    compat: { best: "DHRG", bestDesc: "TA会照顾你的一切，你负责让TA开心", worst: "SCHG", worstDesc: "两个摆烂的人在一起会饿死" }
+  },
+  "SCEG": {
+    name: "人间清醒摆烂家",
+    tagline: "我摆烂不是因为懒，是因为我看透了",
+    desc: "你和普通的摆烂不一样。你不是因为懒才摆烂的，你是经过深思熟虑后决定摆烂的。你能说出100条'努力没用'的理由，而且每一条都很有道理。你读过《存在与虚无》，你理解'西西弗斯的石头'，你知道宇宙终将热寂——所以今天中午吃什么真的很重要。你的摆烂有一种哲学高度，让普通的摆烂人自愧不如。",
+    power: "思辨能力极强，能用哲学理论为任何摆烂行为找到合理的解释。你是摆烂界的知识分子。",
+    weakness: "想得太多做得太少，你的墓志铭大概是'想了10000件事，做了0件'。",
+    compat: { best: "SHEG", bestDesc: "TA的快乐能中和你的过度思考", worst: "DHRG", worstDesc: "TA的存在否定了你所有的人生哲学" }
+  },
+  "DCEG": {
+    name: "阳光卷心菜",
+    tagline: "表面是个小太阳，内心是个绞肉机",
+    desc: "你看起来是那种完美的人——阳光、积极、努力、友善。你的朋友圈全是正能量，你的笑容能照亮整个办公室。但只有你自己知道，你每天晚上回家后都会瘫在沙发上怀疑人生。你的'阳光'是努力维持的人设，你的'积极'是咬着牙坚持的习惯。你不是虚伪，你只是觉得'让别人开心'比'让自己开心'更重要。偶尔你也会想：如果有一天我不笑了，还会有人喜欢我吗？",
+    power: "情商极高，能敏锐地感知他人的情绪并做出恰当的回应。你是所有人的倾诉对象。",
+    weakness: "长期压抑自己的真实情感，总有一天会爆发。你的心理承受能力就像一根绷紧的橡皮筋。",
+    compat: { best: "SHNG", bestDesc: "TA能看穿你的伪装，给你真正的理解", worst: "DHRE", worstDesc: "两个表演者在一起太累了" }
+  },
+  "DHEG": {
+    name: "六边形战士",
+    tagline: "你的人生像开了挂，但其实你只是比别人少睡了4小时",
+    desc: "你是那种让所有人怀疑'人和人之间的差距怎么比人和狗都大'的存在。学习好、工作好、社交好、长得好、性格好——你就像一个没有短板的六边形。但只有你知道，这一切的背后是每天只睡4小时、放弃所有娱乐、把每一分钟都安排得明明白白的代价。你不是天才，你只是一个把'努力'做到了极致的普通人。你的座右铭是'比你优秀的人比你还努力'——而你就是那个'比你优秀的人'。",
+    power: "全面发展，几乎没有弱项。你是那种'什么都会一点，但什么都做得很好'的稀有物种。",
+    weakness: "完美主义导致的高压状态。你无法接受任何不完美，包括你自己。你的焦虑指数和你的成就指数成正比。",
+    compat: { best: "SHEG", bestDesc: "TA的快乐是你最需要的东西", worst: "SCEG", worstDesc: "TA的'看透一切'会让你崩溃" }
+  },
+  "SCHE": {
+    name: "抽象艺术家",
+    tagline: "我的精神状态已经超越了人类的理解范围",
+    desc: "你是一个行走的抽象艺术作品。你的行为逻辑、思维方式、表达习惯都处于一种'超越了正常人类理解范畴'的状态。你可能在开会时突然站起来说'我有一个大胆的想法'，然后提出一个让所有人沉默30秒的方案。你的朋友圈是各种看不懂的梗和抽象表情包的集合。你不是故意离谱，你只是天生就和这个世界的频率不太一样。",
+    power: "创造力爆表，你的大脑能产生无数奇思妙想。你可能是下一个改变世界的天才（或者下一个被送进精神科的患者）。",
+    weakness: "和99%的人无法正常沟通。你的想法经常被误解为'有病'，你的创意经常被当作'搞笑'。",
+    compat: { best: "SCHG", bestDesc: "只有TA能理解你的抽象", worst: "DCNE", worstDesc: "TA的逻辑会让你抓狂" }
+  },
+  "DCHE": {
+    name: "疯狂科学家",
+    tagline: "我用科学的方法做最离谱的事",
+    desc: "你是一个用'科学精神'来对待一切荒诞事物的奇人。你会用Excel表格来分析应该追哪个人，用项目管理软件来规划自己的恋爱进度，用数据模型来预测今天的午饭吃什么。你的离谱之处在于——你做这些事的时候是认真的。你的电脑里有一个文件夹叫'人生规划v3.2最终版（真的最终）'，但这个文件夹里已经有47个版本了。",
+    power: "将理性思维应用到任何领域的能力。你能把最混乱的事情变得有条理，把最荒谬的想法变成可执行的方案。",
+    weakness: "过度依赖数据和分析，有时候会忽略直觉和情感。你可能在分析'应不应该表白'的时候，对方已经和别人在一起了。",
+    compat: { best: "SCHE", bestDesc: "TA的感性平衡了你的理性", worst: "SCEG", worstDesc: "TA的虚无主义否定了你所有分析" }
+  },
+  "DHNE": {
+    name: "天选打工人",
+    tagline: "我不是在上班，我是在上班的路上",
+    desc: "你是资本家最喜欢的员工类型——主动加班、从不抱怨、效率极高。你的生活和工作之间的界限已经完全模糊了，你可能在洗澡的时候都在想明天的PPT。你的手机里工作群的消息永远已读，你的电脑永远不会关机。你的人生信条是'今天的努力是为了明天能更努力'。你的朋友们已经放弃约你出来了，因为他们知道你的回答永远是'下次一定'。",
+    power: "工作能力极强，是公司的中流砥柱。你的职业发展速度比坐火箭还快。",
+    weakness: "除了工作以外的所有人生体验都在快速流失。你的兴趣爱好是'工作'，你的放松方式是'想想工作'。",
+    compat: { best: "SHEG", bestDesc: "TA是你唯一的快乐源泉", worst: "SCEG", worstDesc: "TA的存在主义危机会传染给你" }
+  }
+};
+
+// ===== 状态管理 =====
+let currentQuestion = 0;
+let scores = { S: 0, D: 0, H: 0, R: 0, C: 0, N: 0, G: 0, E: 0 };
+let selectedOption = null;
+let answerHistory = []; // 记录每题的选择
+
+// ===== 页面切换 =====
+function showPage(pageId) {
+  document.getElementById('startPage').style.display = 'none';
+  document.getElementById('quizPage').style.display = 'none';
+  document.getElementById('resultPage').style.display = 'none';
+  document.getElementById(pageId).style.display = 'block';
+}
+
+// ===== 开始测试 =====
+function startQuiz() {
+  currentQuestion = 0;
+  scores = { S: 0, D: 0, H: 0, R: 0, C: 0, N: 0, G: 0, E: 0 };
+  answerHistory = [];
+  showPage('quizPage');
+  renderQuestion();
+}
+
+// ===== 渲染题目 =====
+function renderQuestion() {
+  const q = questions[currentQuestion];
+  const total = questions.length;
+
+  document.getElementById('progressBar').style.width = ((currentQuestion) / total * 100) + '%';
+  document.getElementById('progressText').textContent = `${currentQuestion + 1} / ${total}`;
+  document.getElementById('questionNumber').textContent = `QUESTION ${String(currentQuestion + 1).padStart(2, '0')}`;
+  document.getElementById('questionText').textContent = q.text;
+
+  const container = document.getElementById('optionsContainer');
+  container.innerHTML = '';
+
+  const labels = ['A', 'B', 'C', 'D'];
+  const previousAnswer = answerHistory[currentQuestion] || null;
+
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    if (previousAnswer === opt.score) {
+      btn.classList.add('selected');
+    }
+    btn.innerHTML = `<span class="option-label">${labels[i]}</span><span>${opt.text}</span>`;
+    btn.onclick = () => selectOption(btn, opt.score);
+    container.appendChild(btn);
+  });
+
+  selectedOption = previousAnswer;
+
+  // 上一题按钮：第一题时隐藏
+  const btnPrev = document.getElementById('btnPrev');
+  if (currentQuestion === 0) {
+    btnPrev.classList.add('hidden');
+  } else {
+    btnPrev.classList.remove('hidden');
+  }
+
+  // 下一题按钮
+  const btnNext = document.getElementById('btnNext');
+  if (selectedOption) {
+    btnNext.classList.add('active');
+  } else {
+    btnNext.classList.remove('active');
+  }
+  btnNext.textContent = currentQuestion === total - 1 ? '查看结果 →' : '下一题 →';
+
+  // 动画
+  document.getElementById('quizPage').style.animation = 'none';
+  document.getElementById('quizPage').offsetHeight;
+  document.getElementById('quizPage').style.animation = 'fadeInUp 0.5s ease';
+}
+
+// ===== 选择选项 =====
+function selectOption(btn, score) {
+  document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedOption = score;
+  document.getElementById('btnNext').classList.add('active');
+}
+
+// ===== 下一题 =====
+function nextQuestion() {
+  if (!selectedOption) return;
+
+  // 如果之前有答案，先扣掉旧分数
+  if (answerHistory[currentQuestion]) {
+    scores[answerHistory[currentQuestion]]--;
+  }
+
+  // 保存新答案并加分
+  answerHistory[currentQuestion] = selectedOption;
+  scores[selectedOption]++;
+
+  currentQuestion++;
+  if (currentQuestion >= questions.length) {
+    showLoading();
+  } else {
+    renderQuestion();
+  }
+}
+
+// ===== 上一题 =====
+function prevQuestion() {
+  if (currentQuestion <= 0) return;
+
+  // 如果当前题有已保存的答案（不是本次新选的），需要扣分
+  if (answerHistory[currentQuestion]) {
+    scores[answerHistory[currentQuestion]]--;
+    answerHistory[currentQuestion] = null;
+  }
+
+  currentQuestion--;
+  renderQuestion();
+}
+
+// ===== 加载动画 =====
+function showLoading() {
+  const loadingTexts = [
+    '正在分析你的离谱程度...',
+    '正在计算你的精神状态...',
+    '正在对比你的抽象指数...',
+    '正在生成你的离谱鉴定报告...',
+    '正在和宇宙确认你的人格类型...',
+    '马上就好，比你的人生规划还快...'
+  ];
+
+  const overlay = document.getElementById('loadingOverlay');
+  overlay.classList.add('show');
+
+  let textIndex = 0;
+  const textEl = overlay.querySelector('.loading-text');
+  const interval = setInterval(() => {
+    textIndex++;
+    if (textIndex < loadingTexts.length) {
+      textEl.textContent = loadingTexts[textIndex];
+    }
+  }, 500);
+
+  setTimeout(() => {
+    clearInterval(interval);
+    overlay.classList.remove('show');
+    showResult();
+  }, 3500);
+}
+
+// ===== 计算并显示结果 =====
+function showResult() {
+  const typeCode = getPersonalityType();
+  const type = types[typeCode];
+
+  if (!type) {
+    // fallback
+    const fallbackCode = "SCHG";
+    showResultPage(fallbackCode, types[fallbackCode]);
+    return;
+  }
+
+  showResultPage(typeCode, type);
+}
+
+function getPersonalityType() {
+  const d1 = scores.S >= scores.D ? 'S' : 'D';
+  const d2 = scores.H >= scores.R ? 'H' : 'R';
+  const d3 = scores.C >= scores.N ? 'C' : 'N';
+  const d4 = scores.G >= scores.E ? 'G' : 'E';
+
+  const code = d1 + d2 + d3 + d4;
+
+  // Handle the space-in-name types
+  if (types[code]) return code;
+
+  // Try without spaces
+  const cleanCode = code.replace(/\s/g, '');
+  if (types[cleanCode]) return cleanCode;
+
+  // Find closest match
+  const allCodes = Object.keys(types);
+  let bestMatch = allCodes[0];
+  let bestScore = 0;
+
+  allCodes.forEach(tc => {
+    let matchScore = 0;
+    const clean = tc.replace(/\s/g, '');
+    if (clean[0] === d1) matchScore++;
+    if (clean[1] === d2) matchScore++;
+    if (clean[2] === d3) matchScore++;
+    if (clean[3] === d4) matchScore++;
+    if (matchScore > bestScore) {
+      bestScore = matchScore;
+      bestMatch = tc;
+    }
+  });
+
+  return bestMatch;
+}
+
+function showResultPage(code, type) {
+  document.getElementById('resultCode').textContent = code.replace(/\s/g, '');
+  document.getElementById('resultName').textContent = type.name;
+  document.getElementById('resultTagline').textContent = `"${type.tagline}"`;
+
+  // 维度条
+  const dimBars = document.getElementById('dimensionBars');
+  const dimInfo = [
+    { label: '摆烂 vs 奋斗', left: 'S 摆烂', right: 'D 奋斗', leftScore: scores.S, rightScore: scores.D, color: '#ff3e6c' },
+    { label: '幻觉 vs 现实', left: 'H 幻觉', right: 'R 现实', leftScore: scores.H, rightScore: scores.R, color: '#00e5ff' },
+    { label: '抽象 vs 正常', left: 'C 抽象', right: 'N 正常', leftScore: scores.C, rightScore: scores.N, color: '#ffd700' },
+    { label: '社恐 vs 社牛', left: 'G 社恐', right: 'E 社牛', leftScore: scores.G, rightScore: scores.E, color: '#a855f7' }
+  ];
+
+  dimBars.innerHTML = dimInfo.map(d => {
+    const total = d.leftScore + d.rightScore;
+    const pct = total > 0 ? Math.round(d.leftScore / total * 100) : 50;
+    return `
+      <div class="dimension-item">
+        <div class="dimension-label">${d.label}</div>
+        <div class="dimension-letters" style="color: ${d.color}">${d.leftScore >= d.rightScore ? d.left : d.right}</div>
+        <div style="font-size:12px;color:var(--text-dim)">${d.leftScore} vs ${d.rightScore}</div>
+        <div class="dimension-bar">
+          <div class="dimension-fill" style="width:${pct}%;background:${d.color}"></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // 描述
+  document.getElementById('resultDescription').innerHTML = `<p>${type.desc}</p>`;
+  document.getElementById('resultPower').innerHTML = `<p>${type.power}</p>`;
+  document.getElementById('resultWeakness').innerHTML = `<p>${type.weakness}</p>`;
+
+  // 兼容性
+  const compatHTML = `
+    <div class="compat-item">
+      <div>
+        <span class="compat-type">💕 最佳拍档：${type.compat.best}</span>
+        <div class="compat-desc">${type.compat.bestDesc}</div>
+      </div>
+    </div>
+    <div class="compat-item">
+      <div>
+        <span class="compat-type">💥 灾难组合：${type.compat.worst}</span>
+        <div class="compat-desc">${type.compat.worstDesc}</div>
+      </div>
+    </div>
+  `;
+  document.getElementById('compatibilityContent').innerHTML = compatHTML;
+
+  showPage('resultPage');
+  window.scrollTo(0, 0);
+}
+
+// ===== 复制结果 =====
+function copyResult() {
+  const code = document.getElementById('resultCode').textContent;
+  const name = document.getElementById('resultName').textContent;
+  const tagline = document.getElementById('resultTagline').textContent;
+
+  const text = `【WTF-16 人格测试结果】\n🧬 类型：${code} - ${name}\n💬 ${tagline}\n\n来测测你是什么品种的离谱 👉 [WTF-16人格测试]`;
+
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = event.target;
+    btn.textContent = '✅ 已复制！';
+    setTimeout(() => { btn.textContent = '📋 复制结果'; }, 2000);
+  }).catch(() => {
+    // fallback
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+    const btn = event.target;
+    btn.textContent = '✅ 已复制！';
+    setTimeout(() => { btn.textContent = '📋 复制结果'; }, 2000);
+  });
+}
+
+// ===== 重新测试 =====
+function restartQuiz() {
+  showPage('startPage');
+  window.scrollTo(0, 0);
+}
+</script>
+
+</body>
+</html>
